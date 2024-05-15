@@ -1,4 +1,3 @@
 __pycache__
 .venv
-master_password.bin
-passwords.json
+vault

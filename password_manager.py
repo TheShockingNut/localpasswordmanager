@@ -3,6 +3,7 @@ import os
 import base64
 import hashlib
 from cryptography.fernet import Fernet, InvalidToken
+from config import PASSWORD_FILE_PATH, MASTER_PASSWORD_FILE_PATH
 
 def generate_key_from_password(password):
     salt = b'\x00' * 16  # Using a fixed salt for simplicity; consider using a unique salt per user in a real application
@@ -35,21 +36,23 @@ def decrypt_text(encrypted_text, master_key):
     except InvalidToken:
         raise ValueError("Invalid master password")
 
-def load_passwords(file_path="passwords.json"):
+def load_passwords(file_path=PASSWORD_FILE_PATH):
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             return json.load(file)
     return {}
 
-def save_passwords_to_file(passwords, file_path="passwords.json"):
+def save_passwords_to_file(passwords, file_path=PASSWORD_FILE_PATH):
     with open(file_path, "w") as file:
         json.dump(passwords, file)
 
-def save_master_password(master_password, file_path="master_password.bin"):
+def save_master_password(master_password, file_path=MASTER_PASSWORD_FILE_PATH):
+    if not os.path.exists('vault'):
+        os.makedirs('vault')
     with open(file_path, "wb") as file:
         file.write(master_password)
 
-def load_master_password(file_path="master_password.bin"):
+def load_master_password(file_path=MASTER_PASSWORD_FILE_PATH):
     if os.path.exists(file_path):
         with open(file_path, "rb") as file:
             return file.read()
